@@ -5,10 +5,9 @@ public class Category {
 
     private int idCategory;
     private String description;
-    private boolean state;
+    private String state;
 
-    public Category(int idCategory, String description, boolean state) {
-        this.idCategory = idCategory;
+    public Category(String description, String state) {
         this.description = description;
         this.state = state;
     }
@@ -32,11 +31,11 @@ public class Category {
         this.description = description;
     }
 
-    public boolean isState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(boolean state) {
+    public void setState(String state) {
         this.state = state;
     }
 }

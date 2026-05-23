@@ -10,8 +10,7 @@ public class Product {
     private boolean state;
     Category category;
 
-    public Product(int idProduct, String description, double price, int stock, boolean state, Category category) {
-        this.idProduct = idProduct;
+    public Product(String description, double price, int stock, boolean state, Category category) {
         this.description = description;
         this.price = price;
         this.stock = stock;
