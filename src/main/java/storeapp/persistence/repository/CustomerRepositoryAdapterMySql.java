@@ -19,7 +19,7 @@ public class CustomerRepositoryAdapterMySql implements CustomerPersistencePort {
     private final Connection dbConnection;
     private final CustomerRowMapper rowMapper;
 
-    public CustomerRepositoryDB(Connection dbConnection, CustomerRowMapper rowMapper) {
+    public CustomerRepositoryAdapterMySql(Connection dbConnection, CustomerRowMapper rowMapper) {
         this.dbConnection = dbConnection;
         this.rowMapper = rowMapper;
     }
@@ -86,7 +86,9 @@ public class CustomerRepositoryAdapterMySql implements CustomerPersistencePort {
     }
 
     @Override
-    public Customer updateCustomer(int id , Customer customer) {
+    public Customer updateCustomer(Customer customer) {
+
+
         String sql = """
                 UPDATE customer
                 SET name=?, last_name=?, email=?, password=?, status=?, quote=?, customer_type=?

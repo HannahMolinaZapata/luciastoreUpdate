@@ -10,7 +10,7 @@ public interface CustumerService {
     public Customer createCustomer(int idCustomer,String name,String lastName,String email,String password,boolean customerState,double quote,String customerType);
     public Optional<Customer> getCustomerById(int id);
     public Optional<Customer> getCustomerByEmail(String email);
-    public Customer updateCustomer(Customer customer);
+    public Customer updateCustomer(int idCustomer,String name,String lastName,String email,String password,boolean customerState,double quote,String customerType);
     public void deleteCustomer(int id);
 
 

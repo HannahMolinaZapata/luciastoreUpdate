@@ -55,6 +55,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAllOrders() {
+
+        List<Order> orders = OrderPersistencePort.
+
+
         return List.of();
     }
 

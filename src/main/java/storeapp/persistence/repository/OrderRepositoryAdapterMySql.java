@@ -2,11 +2,14 @@ package storeapp.persistence.repository;
 
 import storeapp.domain.Order;
 import storeapp.persistence.mapper.OrderRowMapper;
+import storeapp.persistence.mapper.RowMapper;
 import storeapp.services.outputport.OrderPersistencePort;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +55,29 @@ public class OrderRepositoryAdapterMySql implements OrderPersistencePort {
 
     @Override
     public List<Order> findAllOrders() {
-        return List.of();
+
+        List<Order> orders = new ArrayList<>();
+
+        String sql = "SELECT order_id, order_date , name , last_name , description , quantity , price " +
+                "FROM order" +
+                "INNER JOIN  customer ON order.customer = customer.id_customer" +
+                "INNER JOIN product ON order.product = product.id_product";
+
+
+        try(PreparedStatement ps = connection.prepareStatement(sql)){
+
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                orders.add(orderRowMapper.mapRow(rs));
+            }
+
+        }catch (SQLException e){
+            throw new RuntimeException("No se pudo recuperar las ordenes ", e);
+
+        }
+
+        return orders;
     }
 
     @Override

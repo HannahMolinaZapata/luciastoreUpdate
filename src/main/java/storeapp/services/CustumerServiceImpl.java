@@ -41,7 +41,7 @@ public class CustumerServiceImpl implements CustumerService {
 
 
     @Override
-    public Customer updateCustomer(int id) {
+    public Customer updateCustomer(int id, String name, String lastName, String email, String password, boolean status, double quote, String customerType) {
 
         Optional<Customer> customerOpt = customerRepository.findCustomerById(id);
 
@@ -49,23 +49,23 @@ public class CustumerServiceImpl implements CustumerService {
             Customer customer = customerOpt.get();
 
             System.out.println("Actualizar 1. id 2. Nombre 3 Apellido 4.Correo 5. Contraseña");
-            int option = FormValidator.validateInt("Opcion");
+            int option = FormValidation.validateInt("Opcion");
 
             switch (option) {
                 case 1:
-                    customer.setId(FormValidator.validateInt("Actualizar id"));
+                    customer.setId(FormValidation.validateInt("Actualizar id"));
                     break;
                 case 2:
-                    customer.setName(FormValidator.validateString("Actualizar nombre"));
+                    customer.setName(FormValidation.validateString("Actualizar nombre"));
                     break;
                 case 3:
-                    customer.setLastName(FormValidator.validateString("Actualizar Apellido"));
+                    customer.setLastName(FormValidation.validateString("Actualizar Apellido"));
                     break;
                 case 4:
-                    customer.setEmail(FormValidator.validateString("Actualizar Email"));
+                    customer.setEmail(FormValidation.validateString("Actualizar Email"));
                     break;
                 case 5:
-                    customer.setPassword(FormValidator.validateString("Actualizar contraseña"));
+                    customer.setPassword(FormValidation.validateString("Actualizar contraseña"));
                     break;
                 default:
                     System.out.println("Seleccione una opcion valida");
@@ -79,5 +79,11 @@ public class CustumerServiceImpl implements CustumerService {
             System.out.println("Cliente no encontrado");
             return null;
         }
+    }
+
+
+    @Override
+    public void deleteCustomer(int id) {
+
     }
 }

@@ -57,12 +57,25 @@ public class CustomerView {
 
             Customer customer  = customerService.getCustomerById(id).orElseThrow();
 
-            if(customer != null){
+        String name = FormValidation.validateString("Ingrese el nombre del cliente");
+        String lastName = FormValidation.validateString("Ingrese el apellido");
+        String email = FormValidation.validateString("ingrese el email");
+        String password = FormValidation.validateString("Ingrese el password ");
+        System.out.println("Estado Cliente ");
+        Boolean customerState = CustomerStateSelector.selectCustomerState();
+        double quote = FormValidation.validateDouble("Cupo");
+        System.out.println("Tipo de Cliente");
+        String customerType = CustomerTypeSelector.selectTypeCustomer();
+
+
+        if(customer != null){
 
             System.out.println("Actualizar 1.Correo 2. Contraseña");
             int option = FormValidation.validateInt("Opcion");
 
-            switch (option){
+
+
+                switch (option){
 
                 case 1:
                     customer.setEmail(FormValidation.validateString("Actualizar Email"));
@@ -78,7 +91,7 @@ public class CustomerView {
                 System.out.println("Cliente no encontrado");
             }
 
-            customerService.updateCustomer(customer);
+            customerService.updateCustomer(id, name, lastName, email, password, customerState, quote, customerType);
 
     }
 
