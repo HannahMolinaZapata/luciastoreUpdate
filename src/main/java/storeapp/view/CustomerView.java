@@ -39,7 +39,7 @@ public class CustomerView {
     public void getCustumerById(){
 
         int id = FormValidation.validateInt("Ingrese el Id del cliente a buscar");
-        Customer customer = customerService.getCustomerById(id);
+        Customer customer = customerService.getCustomerById(id).orElseThrow();
 
         System.out.println("id: " + customer.getId() + "\n" +
                 "Nombre: " + customer.getName() + "\n" +
@@ -55,7 +55,7 @@ public class CustomerView {
 
             int id = FormValidation.validateInt("Ingrese el id a actualizar");
 
-            Customer customer  = customerService.getCustomerById(id);
+            Customer customer  = customerService.getCustomerById(id).orElseThrow();
 
             if(customer != null){
 

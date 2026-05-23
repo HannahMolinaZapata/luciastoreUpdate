@@ -10,51 +10,74 @@ import java.util.Scanner;
 
 public class CustumerServiceImpl implements CustumerService {
 
-    Scanner sc = new Scanner(System.in);
 
     //Ahora vamos a comunicar las clases , para eso vamos a crear una instancia de la capa inmediatamente anterior
     private final CustomerPersistencePort customerRepository;
 
-    public CustumerServiceImpl( CustomerPersistencePort customerRepository) {
-        this.customerRepository = customerRepository;
 
+    public CustumerServiceImpl(  CustomerPersistencePort customerRepository) {
+        this.customerRepository = customerRepository;
     }
 
     @Override
-    public Customer createCustomer(int idCustomer,String name,String lastName,String email,String password,boolean customerState,double quote,String customerType) {
+    public Customer createCustomer(int id, String name, String lastName, String email, String password, boolean status, double quote, String customerType) {
 
-        Customer customer = new Customer(idCustomer,name,lastName,email,password,customerState, quote, customerType);
+        Customer customer = new Customer(id, name, lastName, email, password, status, quote, customerType);
 
         return customerRepository.saveCustomer(customer);
     }
 
     @Override
-    public Customer getCustomerById(int id) {
-
+    public Optional<Customer> getCustomerById(int id) {
         return customerRepository.findCustomerById(id);
     }
 
     @Override
     public Optional<Customer> getCustomerByEmail(String email) {
+
+
         return Optional.empty();
     }
 
 
     @Override
-    public Customer updateCustomer(Customer customer) {
+    public Customer updateCustomer(int id) {
 
-        System.out.println("Estoy en el service");
-        Customer customer1 = customer;
-        System.out.println("Bebug" + customer1.getPassword());
-        customerRepository.updateCustomer(customer1);
+        Optional<Customer> customerOpt = customerRepository.findCustomerById(id);
 
-        return customer1;
-    }
+        if (customerOpt.isPresent()) {
+            Customer customer = customerOpt.get();
 
-    @Override
-    public void deleteCustomer(int id) {
+            System.out.println("Actualizar 1. id 2. Nombre 3 Apellido 4.Correo 5. Contraseña");
+            int option = FormValidator.validateInt("Opcion");
 
-        customerRepository.deleteCustomer(id);
+            switch (option) {
+                case 1:
+                    customer.setId(FormValidator.validateInt("Actualizar id"));
+                    break;
+                case 2:
+                    customer.setName(FormValidator.validateString("Actualizar nombre"));
+                    break;
+                case 3:
+                    customer.setLastName(FormValidator.validateString("Actualizar Apellido"));
+                    break;
+                case 4:
+                    customer.setEmail(FormValidator.validateString("Actualizar Email"));
+                    break;
+                case 5:
+                    customer.setPassword(FormValidator.validateString("Actualizar contraseña"));
+                    break;
+                default:
+                    System.out.println("Seleccione una opcion valida");
+                    break;
+            }
 
+            // Since the customer object is a reference to the one in the repository list,
+            // updating it here updates it in the list. No need to call repository update.
+            return customer;
+        } else {
+            System.out.println("Cliente no encontrado");
+            return null;
+        }
     }
 }

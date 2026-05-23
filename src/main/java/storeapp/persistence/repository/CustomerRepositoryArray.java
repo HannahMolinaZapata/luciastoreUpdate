@@ -6,6 +6,7 @@ import storeapp.services.outputport.CustomerPersistencePort;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class CustomerRepositoryArray implements CustomerPersistencePort {
 
@@ -33,7 +34,7 @@ public class CustomerRepositoryArray implements CustomerPersistencePort {
     }
 
 
-    public Customer findCustomerById(int id){
+    public Optional<Customer> findCustomerById(int id){
         System.out.println("repositorio" + id);
         try{
         for(Customer customer: customers){
@@ -41,14 +42,12 @@ public class CustomerRepositoryArray implements CustomerPersistencePort {
                 System.out.println(customer.getId() + " " + customer.getName() + " " + customer.getLastName() + " " + customer.getEmail() + " " + customer.getPassword() + " " + customer.isStatus() + " " + customer.getQuote() + " " + customer.getCustomerType());
             }
 
-            return customer;
+            return Optional.of(customer);
         }
-
-        return null;
         }catch (Exception e){
             System.out.println("Customer not found");
-            return null;
         }
+        return Optional.empty();
     }
 
     public void findCustomerByEmail(){
@@ -76,8 +75,5 @@ public class CustomerRepositoryArray implements CustomerPersistencePort {
                 customers.remove(id);
             }
         }
-
     }
-
-
 }

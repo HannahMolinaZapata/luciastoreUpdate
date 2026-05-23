@@ -14,7 +14,7 @@ public enum PaidMethodEnum {
 
     }
 
-    String getDescription(){
+    public String getDescription(){
         return description;
     }
 

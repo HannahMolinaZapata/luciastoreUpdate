@@ -11,15 +11,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CustomerRepositoryAdapterMySql implements CustomerPersistencePort {
 
 
-    private final Connection connection;
+    private final Connection dbConnection;
     private final CustomerRowMapper rowMapper;
 
-    public CustomerRepositoryAdapterMySql(Connection connection, CustomerRowMapper rowMapper){
-        this.connection = connection;
+    public CustomerRepositoryDB(Connection dbConnection, CustomerRowMapper rowMapper) {
+        this.dbConnection = dbConnection;
         this.rowMapper = rowMapper;
     }
 
@@ -27,25 +28,21 @@ public class CustomerRepositoryAdapterMySql implements CustomerPersistencePort {
     @Override
     public Customer saveCustomer(Customer customer) {
 
-        String sql = "INSERT INTO customer (id_customer, name, last_name, email, password, status, quote, type) VALUES (?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO customer (id_customer,name, last_name, email, password, status, quote, customer_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try(PreparedStatement ps = connection.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS) ){
+        try(PreparedStatement ps = dbConnection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
 
-            setCustomerParams(ps , customer);
-
+            setCustomerParams(ps, customer);
             ps.executeUpdate();
 
             ResultSet keys = ps.getGeneratedKeys();
             if(keys.next()){
-
                 customer.setId(keys.getInt(1));
             }
 
-        }catch(SQLException e){
-           throw new RuntimeException("Error al guardar el cliente", e);
+        }catch (SQLException e){
+            throw new RuntimeException("Error al guardar cliente: " + e.getMessage(), e);
         }
-
-
         return customer;
     }
 
@@ -53,68 +50,57 @@ public class CustomerRepositoryAdapterMySql implements CustomerPersistencePort {
     public List<Customer> findAllCustomers() {
 
         List<Customer> customers = new ArrayList<>();
-
         String sql = "SELECT * FROM customer";
+        try(PreparedStatement ps = dbConnection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()){
 
-        try(PreparedStatement ps = connection.prepareStatement(sql)){
-
-            ResultSet rs = ps.executeQuery();
-
-            while(rs.next()){
+            while (rs.next()){
                 customers.add(rowMapper.mapRow(rs));
             }
 
-        }catch(SQLException e){
-            throw new RuntimeException("error al buscar los datos " + e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        System.out.println("Estoy en el Repositorio MYSQL");
         return customers;
     }
 
     @Override
-    public Customer findCustomerById(int id) {
+    public Optional<Customer> findCustomerById(int id) {
 
+        String sql = "SELECT * FROM customer WHERE id_customer = ?";
 
-        String sql = "SELECT * FROM customer WHERE id_customer = ? ";
-
-        try(PreparedStatement ps = connection.prepareStatement(sql)){
+        try(PreparedStatement ps = dbConnection.prepareStatement(sql)){
 
             ps.setInt(1, id);
-
             ResultSet rs = ps.executeQuery();
 
             if(rs.next()){
-
-                Customer customer = rowMapper.mapRow(rs);
-
-                return customer;
+                return Optional.of(rowMapper.mapRow(rs));
             }
 
-        }catch (SQLException e){
-            throw new RuntimeException("Cliente con id" + id + "no existe");
-
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al buscar cliente por id: " + e.getMessage(),e);
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Customer updateCustomer(Customer customer) {
-
-        String sql= "UPDATE customer SET phone = ? , email = ? , password = ? WHERE id_customer = ?";
-
-        try(PreparedStatement ps = connection.prepareStatement(sql)){
-
+    public Customer updateCustomer(int id , Customer customer) {
+        String sql = """
+                UPDATE customer
+                SET name=?, last_name=?, email=?, password=?, status=?, quote=?, customer_type=?
+                WHERE id_customer = ?
+                """;
+        try (PreparedStatement ps = dbConnection.prepareStatement(sql)) {
             setCustomerParams(ps, customer);
-
-            ps.setInt(4, customer.getId());
-
+            ps.setInt(8, customer.getId());
             ps.executeUpdate();
-
-        }catch (SQLException e){
-            throw new RuntimeException("CLiente no se puede actualizar");
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al actualizar cliente: " + e.getMessage(), e);
         }
         return customer;
+
     }
 
     @Override
@@ -122,33 +108,24 @@ public class CustomerRepositoryAdapterMySql implements CustomerPersistencePort {
 
         String sql = "DELETE FROM customer WHERE id_customer = ?";
 
-
-        try(PreparedStatement ps = connection.prepareStatement(sql)){
-
+        try (PreparedStatement ps = dbConnection.prepareStatement(sql)) {
             ps.setInt(1, id);
-
-            ps.executeUpdate();
-
-        }catch (SQLException e){
-            throw new RuntimeException("No se puede eliminar cliente", e );
+            int rows = ps.executeUpdate();
+            //return rows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al eliminar cliente: " + e.getMessage(), e);
         }
 
     }
 
-
-    //Helper Methods
-
-    private void setCustomerParams(PreparedStatement ps , Customer customer) throws SQLException{
-
+    private void setCustomerParams(PreparedStatement ps, Customer customer) throws SQLException {
         ps.setInt(1, customer.getId());
         ps.setString(2, customer.getName());
         ps.setString(3, customer.getLastName());
         ps.setString(4, customer.getEmail());
         ps.setString(5, customer.getPassword());
-        ps.setString(6, String.valueOf(customer.isStatus()));
+        ps.setBoolean(6, customer.isStatus());
         ps.setDouble(7, customer.getQuote());
         ps.setString(8, customer.getCustomerType());
-
     }
-
 }
