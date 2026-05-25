@@ -2,19 +2,16 @@ package storeapp.config;
 
 import storeapp.domain.Admin;
 import storeapp.persistence.database.DataBaseConnectionMySql;
-import storeapp.persistence.mapper.CustomerRowMapper;
-import storeapp.persistence.mapper.RowMapper;
-import storeapp.persistence.repository.CustomerRepositoryAdapterMySql;
-import storeapp.persistence.repository.CustomerRepositoryArray;
-import storeapp.services.AdminServiceImpl;
-import storeapp.services.CustomerAdminServiceImpl;
-import storeapp.services.input.CustomerAdminService;
-import storeapp.services.input.CustumerService;
-import storeapp.services.CustumerServiceImpl;
+import storeapp.persistence.mapper.*;
+import storeapp.persistence.repository.*;
+import storeapp.services.*;
+import storeapp.services.input.*;
+import storeapp.services.outputport.CategoryPersistencePort;
 import storeapp.services.outputport.CustomerPersistencePort;
+import storeapp.services.outputport.OrderPersistencePort;
+import storeapp.services.outputport.ProductPersistencePort;
 import storeapp.userinterface.MenuApp;
-import storeapp.view.AdminView;
-import storeapp.view.CustomerView;
+import storeapp.view.*;
 
 import java.sql.Connection;
 
@@ -29,18 +26,39 @@ public class Config {
         //  y no tenemos que cambiar el codigo del main, esto es una buena practica de programacion, ya que nos permite tener un codigo mas limpio y mantenible.
 
         Admin admin = new Admin();
-        CustomerPersistencePort customerRepositoryArray = new CustomerRepositoryArray();
+
         Connection connection = DataBaseConnectionMySql.getInstance().getConnection();
-        CustomerRowMapper rowMapper = new CustomerRowMapper();
-        CustomerPersistencePort custumerRepositoryDB = new CustomerRepositoryAdapterMySql(connection, rowMapper);
-        CustumerService customerService = new CustumerServiceImpl(custumerRepositoryDB);
-        CustomerAdminService customerAdminService = new CustomerAdminServiceImpl(custumerRepositoryDB);
-        CustomerView customerView = new CustomerView(customerService);
-        AdminServiceImpl adminService = new AdminServiceImpl(admin, custumerRepositoryDB);
-        AdminView adminView = new AdminView(adminService, customerAdminService);
+
+        CustomerRowMapper rowMapperCustomer = new CustomerRowMapper();
+        CategoryRowMapper rowMapperCategory = new CategoryRowMapper();
+        ProductRowMapper rowMapperProduct = new ProductRowMapper();
+        OrderRowMapper rowMapperOrder = new OrderRowMapper();
+
+        CategoryPersistencePort categoryRepositoryDB = new CategoryRepositoryAdapterMySql(connection, rowMapperCategory);
+        CategoryService categoryService = new CategoryServiceImpl(categoryRepositoryDB);
+        CategoryView categoryView = new CategoryView(categoryService);
 
 
-        return new MenuApp(customerView, adminView);
+        ProductPersistencePort productPersistencePort = new ProductRepositoryAdapterMySql(connection, rowMapperProduct);
+        ProductService productService = new ProductServiceImpl(productPersistencePort, categoryRepositoryDB);
+        ProductView productView = new ProductView(productService);
+
+
+        CustomerPersistencePort customerRepository = new CustomerRepositoryArray();
+        CustomerPersistencePort customerRepositoryDB = new CustomerRepositoryAdapterMySql(connection, rowMapperCustomer);
+        CustumerService customerService = new CustumerServiceImpl(customerRepositoryDB);
+        CustomerView customerView = new CustomerView( customerService);
+
+        CustomerAdminService custumerAdminService = new AdminServiceImpl(admin, customerRepositoryDB);
+        AdminService adminServiceImpl = new AdminServiceImpl(admin,customerRepositoryDB);
+        AdminView adminView = new AdminView(adminServiceImpl, admin,custumerAdminService);
+
+        OrderPersistencePort orderRepositoryDB = new OrderRepositoryAdapterMySql(connection, rowMapperOrder);
+        OrderService orderService = new OrderServiceImpl(orderRepositoryDB,customerRepositoryDB, productPersistencePort);
+        OrderView orderView = new OrderView(orderService);
+
+
+        return new MenuApp(customerView, adminView,categoryView, productView, orderView);
 
     }
 

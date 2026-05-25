@@ -2,7 +2,7 @@ package storeapp.view;
 
 import storeapp.services.CategoryStateSelector;
 import storeapp.services.input.CategoryService;
-import storeapp.utils.FormValidation;
+import storeapp.utils.FormValidator;
 
 public class CategoryView {
 
@@ -14,7 +14,7 @@ public class CategoryView {
 
     public void createCategory(){
 
-        String description = FormValidation.validateString("Ingrese la descripción de la categoría: ");
+        String description = FormValidator.validateString("Ingrese la descripción de la categoría: ");
         String status = CategoryStateSelector.CategoryState();
 
         categoryUseCase.createCategory(description, status);

@@ -16,18 +16,23 @@ public class OrderRowMapper implements RowMapper {
         order.setOrderDate(rs.getDate("date_order").toLocalDate());
 
         Customer customer = new Customer();
-        customer.setId(rs.getInt("id_customer"));
+        customer.setId(rs.getInt("customer_id"));
+        customer.setName(rs.getString("customer_name"));
+        customer.setLastName(rs.getString("customer_last_name"));
+        customer.setEmail(rs.getString("customer_email"));
         order.setCustomer(customer);
 
         Product product = new Product();
-        product.setIdProduct(rs.getInt("id_product"));
+        product.setIdProduct(rs.getInt("product_id"));
+        product.setDescription(rs.getString("product_description"));
+        product.setPrice(rs.getDouble("product_price"));
+        product.setStock(rs.getInt("product_stock"));
         order.setProduct(product);
 
         order.setQuantity(rs.getInt("quantity"));
-        order.setTotalPrice(rs.getDouble("total_price"));
+        order.setTotalPrice(rs.getDouble("total"));
         order.setPaidMethod(rs.getString("paid_method"));
-        order.setOrderStatus(rs.getString("order_status"));
-
+        order.setOrderStatus(rs.getString("order_state"));
 
         return order;
     }

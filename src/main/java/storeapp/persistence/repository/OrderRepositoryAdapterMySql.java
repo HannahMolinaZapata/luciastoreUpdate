@@ -2,7 +2,6 @@ package storeapp.persistence.repository;
 
 import storeapp.domain.Order;
 import storeapp.persistence.mapper.OrderRowMapper;
-import storeapp.persistence.mapper.RowMapper;
 import storeapp.services.outputport.OrderPersistencePort;
 
 import java.sql.Connection;
@@ -28,7 +27,7 @@ public class OrderRepositoryAdapterMySql implements OrderPersistencePort {
     @Override
     public Order saveOrder(Order order) {
 
-        String sql = "INSERT INTO orders (date_order , customer, product, quantity,total, paid_method ,order_state) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO purchase_order(date_order , customer, product, quantity,total, paid_method ,order_state) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try(PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
 
@@ -50,6 +49,38 @@ public class OrderRepositoryAdapterMySql implements OrderPersistencePort {
 
     @Override
     public Optional<Order> findOrderById(int id) {
+
+        String sql = """
+    SELECT 
+        o.id_order,
+        o.date_order,
+        o.quantity,
+        o.total,
+        o.paid_method,
+        o.order_state,
+        c.id_customer            AS customer_id,
+        c.name          AS customer_name,
+        c.last_name     AS customer_last_name,
+        c.email         AS customer_email,
+        p.id_product    AS product_id,
+        p.description   AS product_description,
+        p.price         AS product_price,
+        p.stock         AS product_stock
+    FROM purchase_order o
+    JOIN customer c ON o.customer = c.id_customer
+    JOIN product  p ON o.product  = p.id_product
+    WHERE o.id_order = ?
+    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return Optional.of(orderRowMapper.mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al buscar producto por id: " + e.getMessage(), e);
+        }
         return Optional.empty();
     }
 
@@ -57,24 +88,17 @@ public class OrderRepositoryAdapterMySql implements OrderPersistencePort {
     public List<Order> findAllOrders() {
 
         List<Order> orders = new ArrayList<>();
+        String sql = "SELECT * FROM purchase_order";
 
-        String sql = "SELECT order_id, order_date , name , last_name , description , quantity , price " +
-                "FROM order" +
-                "INNER JOIN  customer ON order.customer = customer.id_customer" +
-                "INNER JOIN product ON order.product = product.id_product";
+        try(PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs= ps.executeQuery()){
 
-
-        try(PreparedStatement ps = connection.prepareStatement(sql)){
-
-            ResultSet rs = ps.executeQuery();
-
-            while(rs.next()){
+            while (rs.next()){
                 orders.add(orderRowMapper.mapRow(rs));
             }
 
         }catch (SQLException e){
-            throw new RuntimeException("No se pudo recuperar las ordenes ", e);
-
+            throw new RuntimeException("Error al obtener las ordenes: " + e.getMessage(), e);
         }
 
         return orders;
@@ -92,7 +116,7 @@ public class OrderRepositoryAdapterMySql implements OrderPersistencePort {
 
 
     private void setOrderParams(PreparedStatement ps, Order order) throws SQLException {
-        ps.setDate(1, order.getOrderDate());
+        ps.setDate(1, java.sql.Date.valueOf(order.getOrderDate()));
         ps.setInt(2, order.getCustomer().getId());
         ps.setInt(3, order.getProduct().getIdProduct());
         ps.setInt(4, order.getQuantity());
@@ -100,8 +124,4 @@ public class OrderRepositoryAdapterMySql implements OrderPersistencePort {
         ps.setString(6, order.getPaidMethod());
         ps.setString(7, order.getOrderStatus());
     }
-
-
-
-
 }

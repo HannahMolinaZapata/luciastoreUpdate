@@ -1,7 +1,7 @@
 package storeapp.services;
 
 import storeapp.domain.enums.ProductState;
-import storeapp.utils.FormValidation;
+import storeapp.utils.FormValidator;
 
 public class ProductStateSelector {
 
@@ -9,7 +9,7 @@ public class ProductStateSelector {
 
         System.out.println("Selecione el estado del producto: ");
         System.out.println("1. Disponible 2. Sin Stock 3. Descontinuado");
-        int option = FormValidation.validateInt("Seleccione una opcion: ");
+        int option = FormValidator.validateInt("Seleccione una opcion: ");
         if (option == 1){
             System.out.println("Estado:" + ProductState.AVAILABLE);
             return true;

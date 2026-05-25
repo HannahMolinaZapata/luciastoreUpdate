@@ -1,47 +1,40 @@
 package storeapp.view;
 
+import storeapp.domain.Admin;
 import storeapp.domain.Customer;
-import storeapp.services.AdminServiceImpl;
+import storeapp.services.input.AdminService;
 import storeapp.services.input.CustomerAdminService;
-import storeapp.utils.FormValidation;
 
-import javax.swing.*;
 import java.util.List;
 
 public class AdminView {
 
-    private final AdminServiceImpl adminService;
-    private final CustomerAdminService customerAdminService;
+    private final AdminService adminService;
+    private final CustomerAdminService  custumerAdminService;
+    private final Admin admin;
 
 
-
-    public AdminView(AdminServiceImpl adminService, CustomerAdminService customerAdminService ){
-        this.customerAdminService = customerAdminService;
+    public AdminView(AdminService adminService , Admin admin , CustomerAdminService custumerAdminService) {
         this.adminService = adminService;
-
+        this.admin = admin;
+        this.custumerAdminService = custumerAdminService;
     }
 
     public void createAdmin(){
-
+        adminService.createAdmin(admin);
     }
 
 
     public void getAllCustomers(){
 
-       List<Customer> customers = customerAdminService.getAllCustomers();
-
-       for(Customer customer: customers){
-           System.out.println("id:" + customer.getId() + "\n"+"nombre: " + customer.getName() +"\n"+ "Apellido" + customer.getLastName()+ "\n");
-       }
-
+        List<Customer> customers = custumerAdminService.getAllCustomers();
+        for (Customer customer : customers) {
+            System.out.println(customer.getName() + " " + customer.getLastName());
+        }
     }
 
-
-    public void deleteCustomerById(){
-        System.out.println("Eliminar Cliente");
-        int id_customer = FormValidation.validateInt("Ingrese  el id del cliente a eliminar");
-        customerAdminService.deleteCustomer(id_customer);
+    public void deleteCustomerById(int  id){
+        custumerAdminService.deleteCustomer(id);
     }
-
 
 }

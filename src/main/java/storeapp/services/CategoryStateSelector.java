@@ -1,7 +1,7 @@
 package storeapp.services;
 
 import storeapp.domain.enums.CategoryStateEnum;
-import storeapp.utils.FormValidation;
+import storeapp.utils.FormValidator;
 
 public class CategoryStateSelector {
 
@@ -10,7 +10,7 @@ public class CategoryStateSelector {
         System.out.println("Selecione el estado de ls categoria: ");
         System.out.println("1. Disponible 2. No disponible 3. Próximamente");
         String value = "";
-        int option = FormValidation.validateInt("Seleccione una opcion: ");
+        int option = FormValidator.validateInt("Seleccione una opcion: ");
         switch (option){
             case 1:
                 value = CategoryStateEnum.DISPONIBLE.getDescription();

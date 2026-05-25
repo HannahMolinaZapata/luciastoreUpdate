@@ -1,8 +1,8 @@
 package storeapp.userinterface;
 
 import storeapp.persistence.database.DataBaseConnectionMySql;
-import storeapp.view.AdminView;
-import storeapp.view.CustomerView;
+import storeapp.utils.FormValidator;
+import storeapp.view.*;
 
 import java.util.Scanner;
 
@@ -12,10 +12,16 @@ public class MenuApp {
     Scanner sc = new Scanner(System.in);
     private final CustomerView customerView;
     private final AdminView adminView;
+    private final CategoryView categoryView;
+    private final ProductView productView;
+    private final OrderView orderView;
 
-    public MenuApp(CustomerView customerView, AdminView adminView) {
+    public MenuApp(CustomerView customerView, AdminView adminView, CategoryView categoryView, ProductView productView, OrderView orderView) {
         this.customerView = customerView;
         this.adminView = adminView;
+        this.categoryView = categoryView;
+        this.productView = productView;
+        this.orderView = orderView;
     }
 
     public void showMainMenu(){
@@ -79,22 +85,29 @@ public class MenuApp {
 
         while (true){
             System.out.println("Menu Administrador");
-            System.out.println("1. Gestionar Productos 2. Gestionar Categorias 3. Gestionar Clientes 4. Salir");
-            int option = sc.nextInt();
-            sc.nextLine();
+            System.out.println("1. Gestionar Productos 2. Gestionar Categorias 3. Gestionar Clientes 4. Gestionar Ordenes 5. Salir");
+            int option = FormValidator.validateInt("Seleccione una opcion");
+
 
             switch (option){
                 case 1:
                     System.out.println("Gestionar Productos");
+                    showMenuProducts();
                     break;
                 case 2:
                     System.out.println("Gestionar Categorias");
+                    showMenuCategories();
                     break;
                 case 3:
                     System.out.println("Gestionar Clientes");
+                    boolean runMenu = true;
                     customerMenuAdmin();
                     break;
                 case 4:
+                    System.out.println("Gestionar Ordenes");
+                    showMenuOrders();
+                    break;
+                case 5:
                     System.out.println("Saliendo del menu de administrador");
                     return;
                 default:
@@ -133,6 +146,123 @@ public class MenuApp {
         }
 
     }
+
+    public void showMenuCategories(){
+        System.out.println("Menu Categorias");
+        while (true) {
+            System.out.println("1. Crear Categoria 2. Ver categoria por id 3. Modificar categoria 4. Ver categorias 5. Eliminar categoria 6. Volver al menu anterior");
+            int option = FormValidator.validateInt("Seleccione una opcion");
+
+            switch (option) {
+                case 1:
+                    System.out.println("Crear categoria");
+                    categoryView.createCategory();
+                    break;
+                case 2:
+                    System.out.println("Ver categoria por id");
+                    int id = FormValidator.validateInt("Ingrese el id de la categoria a buscar");
+                    //categoryView.getCategoryById(id);
+                    break;
+                case 3:
+                    System.out.println("Modificar categoria");
+                    //categoryView.updateCategory();
+                    break;
+                case 4:
+                    System.out.println("Ver categorias");
+                    //categoryView.getAllCategories();
+                    break;
+                case 5:
+                    System.out.println("Eliminar categoria");
+                    int idDelete = FormValidator.validateInt("Ingrese el id de la categoria a eliminar");
+                    //categoryView.deleteCategoryById(idDelete);
+                    break;
+                case 6:
+                    System.out.println("Volviendo al menu anterior");
+                    return;
+                default:
+                    System.out.println("Opcion no valida, por favor seleccione una opcion valida");
+            }
+        }
+    }
+
+    public void showMenuProducts(){
+
+        System.out.println("Menu Productos");
+        while (true) {
+            System.out.println("1. Crear Producto 2. Ver Producto por id 3. Modificar Producto 4. Ver productos 5. Eliminar producto 6. Volver al menu anterior");
+            int option = FormValidator.validateInt("Seleccione una opcion");
+
+            switch (option) {
+                case 1:
+                    System.out.println("Crear Producto");
+                    productView.createProduct();
+                    break;
+                case 2:
+                    System.out.println("Ver Producto por id");
+                    int id = FormValidator.validateInt("Ingrese el id del Producto a buscar");
+                    //categoryView.getCategoryById(id);
+                    break;
+                case 3:
+                    System.out.println("Modificar producto");
+                    //categoryView.updateCategory();
+                    break;
+                case 4:
+                    System.out.println("Ver productos");
+                    //categoryView.getAllCategories();
+                    break;
+                case 5:
+                    System.out.println("Eliminar producto");
+                    int idDelete = FormValidator.validateInt("Ingrese el id de la categoria a eliminar");
+                    //categoryView.deleteCategoryById(idDelete);
+                    break;
+                case 6:
+                    System.out.println("Volviendo al menu anterior");
+                    return;
+                default:
+                    System.out.println("Opcion no valida, por favor seleccione una opcion valida");
+            }
+        }
+    }
+
+    public void showMenuOrders(){
+
+        System.out.println("Menu Ordenes");
+        while (true) {
+            System.out.println("1. Crear Orden 2. Ver Orden por id 3. Modificar Orden 4. Ver ordenes 5. Eliminar orden 6. Volver al menu anterior");
+            int option = FormValidator.validateInt("Seleccione una opcion");
+
+            switch (option) {
+                case 1:
+                    System.out.println("Crear Orden");
+                    orderView.createOrder();
+                    break;
+                case 2:
+                    System.out.println("Ver Orden por id");
+                    orderView.getOrderById();
+                    break;
+                case 3:
+                    System.out.println("Modificar orden");
+                    //categoryView.updateCategory();
+                    break;
+                case 4:
+                    System.out.println("Ver ordenes");
+                    //categoryView.getAllCategories();
+                    break;
+                case 5:
+                    System.out.println("Eliminar orden");
+                    int idDelete = FormValidator.validateInt("Ingrese el id de la categoria a eliminar");
+                    //categoryView.deleteCategoryById(idDelete);
+                    break;
+                case 6:
+                    System.out.println("Volviendo al menu anterior");
+                    return;
+                default:
+                    System.out.println("Opcion no valida, por favor seleccione una opcion valida");
+            }
+        }
+    }
+
+
 
 
     public void customerMenuAdmin(){

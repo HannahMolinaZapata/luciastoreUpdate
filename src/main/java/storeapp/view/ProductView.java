@@ -2,7 +2,7 @@ package storeapp.view;
 
 import storeapp.services.ProductStateSelector;
 import storeapp.services.input.ProductService;
-import storeapp.utils.FormValidation;
+import storeapp.utils.FormValidator;
 
 public class ProductView {
 
@@ -15,11 +15,11 @@ public class ProductView {
     public void createProduct(){
         System.out.println("Creating product...");
 
-        String description = FormValidation.validateString("Ingrese la descripción del producto: ");
-        double price = FormValidation.validateDouble("Ingrese el precio del producto: ");
-        int stock = FormValidation.validateInt("Ingrese la cantidad del producto: ");
+        String description = FormValidator.validateString("Ingrese la descripción del producto: ");
+        double price = FormValidator.validateDouble("Ingrese el precio del producto: ");
+        int stock = FormValidator.validateInt("Ingrese la cantidad del producto: ");
         boolean status = ProductStateSelector.ProductState();
-        int categoryId = FormValidation.validateInt("Ingrese el id de la categoria del producto: ");
+        int categoryId = FormValidator.validateInt("Ingrese el id de la categoria del producto: ");
 
         productUseCase.createProduct(description, price, stock, status, categoryId);
     }

@@ -3,10 +3,9 @@ package storeapp.services;
 import storeapp.domain.Customer;
 import storeapp.services.input.CustumerService;
 import storeapp.services.outputport.CustomerPersistencePort;
-import storeapp.utils.FormValidation;
+import storeapp.utils.FormValidator;
 
 import java.util.Optional;
-import java.util.Scanner;
 
 public class CustumerServiceImpl implements CustumerService {
 
@@ -49,23 +48,23 @@ public class CustumerServiceImpl implements CustumerService {
             Customer customer = customerOpt.get();
 
             System.out.println("Actualizar 1. id 2. Nombre 3 Apellido 4.Correo 5. Contraseña");
-            int option = FormValidation.validateInt("Opcion");
+            int option = FormValidator.validateInt("Opcion");
 
             switch (option) {
                 case 1:
-                    customer.setId(FormValidation.validateInt("Actualizar id"));
+                    customer.setId(FormValidator.validateInt("Actualizar id"));
                     break;
                 case 2:
-                    customer.setName(FormValidation.validateString("Actualizar nombre"));
+                    customer.setName(FormValidator.validateString("Actualizar nombre"));
                     break;
                 case 3:
-                    customer.setLastName(FormValidation.validateString("Actualizar Apellido"));
+                    customer.setLastName(FormValidator.validateString("Actualizar Apellido"));
                     break;
                 case 4:
-                    customer.setEmail(FormValidation.validateString("Actualizar Email"));
+                    customer.setEmail(FormValidator.validateString("Actualizar Email"));
                     break;
                 case 5:
-                    customer.setPassword(FormValidation.validateString("Actualizar contraseña"));
+                    customer.setPassword(FormValidator.validateString("Actualizar contraseña"));
                     break;
                 default:
                     System.out.println("Seleccione una opcion valida");

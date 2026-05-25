@@ -1,7 +1,7 @@
 package storeapp.services;
 
 import storeapp.domain.enums.PaidMethodEnum;
-import storeapp.utils.FormValidation;
+import storeapp.utils.FormValidator;
 
 public class OrderPaidMethodSelector {
 
@@ -11,7 +11,7 @@ public class OrderPaidMethodSelector {
         System.out.println("Selecione el metodo de pago: ");
         System.out.println("1. Efectivo 2. Transferencia 3. Credito Personal");
         String value = "";
-        int option = FormValidation.validateInt("Seleccione una opcion: ");
+        int option = FormValidator.validateInt("Seleccione una opcion: ");
         switch (option){
             case 1:
                 value = PaidMethodEnum.CASH.getDescription();
